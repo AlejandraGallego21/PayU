@@ -1,0 +1,21 @@
+Dificiones:
+
+Tokenizar
+ Servicio que permite convertir los números del tarjetahabiente (el número PAN) en un código formado 
+por números que se emplea durante la transacción en lugar del número real sustituyendo al PAN.
+
+Autorizar:
+
+Permite dar inicio a la transacción, en el cual se carga en la tajrta el valor del producto adquirido.
+
+Caputar:
+
+Cuando unel tarjetahabiente efectúa un pago utilizando una tarjeta se debe capturar 
+la información de pago y enviarse al banco del cliente para que sea procesada. 
+
+Anulación :
+
+Anular una autorización le permite cancelar una autorización que aún no ha sido capturada, utilizando el original payment_id.
+
+Reembolso:
+Los reembolsos deben utilizarse en el caso de que un pago ya haya sido capturado y liquidado.

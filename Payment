@@ -1,18 +1,4 @@
-Request:
 
-{
-  "token_type": "credit_card",
-  "credit_card_cvv": "123",
-  "card_number": "4111111111111111",
-  "expiration_date": "10/29",
-  "holder_name": "John Mark",
-  "billing_address": {
-    "country": "USA",
-    "state": "NY",
-    "city": "NYC",
-    "line1": "fifth avenue 10th"
-  }
-}
 
 Response
 

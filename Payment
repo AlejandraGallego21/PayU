@@ -1,4 +1,15 @@
+Requeste:
 
+{
+  "amount": 4097,
+  "currency": "EUR",
+  "billing_address": {
+    "phone": "+1-541-754-3010"
+  },
+  "order": {
+    "id": "myorderid"
+  }
+}
 
 Response
 

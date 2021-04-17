@@ -1,0 +1,1529 @@
+{
+	"info": {
+		"_postman_id": "83ce5434-e2d5-4805-9fd9-56fee2ef2866",
+		"name": "PaymentsOS Payment Flows",
+		"description": "Use this collection to run 1-Step and 2-Step payment flows.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authorize-Capture (2-Step Flow)",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}",
+								"description": "com.payu.colombia.payu"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}",
+								"description": "b7724d0f-7357-48c1-b123-91f2b7fbefac"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}",
+								"description": "com.payu.colombia.payu"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}",
+								"description": "69a2e9eb-cf6f-4433-a783-ef0082b6a2a1"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"EUR\",\n  \"billing_address\": {\n    \"phone\": \"+1-541-754-3010\"\n  },\n  \"order\": {\n    \"id\": \"myorderid\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Authorization",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}",
+								"description": "com.payu.colombia.payu"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}",
+								"description": "69a2e9eb-cf6f-4433-a783-ef0082b6a2a1"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"token\": \"{{token}}\",\n    \"type\": \"tokenized\",\n    \"credit_card_cvv\": \"123\"\n  },\n  \"reconciliation_id\": \"23434534534\"\n}\n"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/authorizations",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"authorizations"
+							]
+						},
+						"description": "Create a new authorization"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Create Capture",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}",
+								"description": "com.payu.colombia.payu"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}",
+								"description": "69a2e9eb-cf6f-4433-a783-ef0082b6a2a1"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/captures",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"captures"
+							]
+						},
+						"description": "Create a new capture"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Charge (1-Step Flow)",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"EUR\",\n  \"billing_address\": {\n    \"phone\": \"+1-541-754-3010\"\n  },\n  \"order\": {\n    \"id\": \"myorderid\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Charge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"type\": \"tokenized\",\n    \"token\": \"{{token}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/charges",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"charges"
+							]
+						},
+						"description": "Create a new charge"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Credit",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"EUR\",\n  \"billing_address\": {\n    \"phone\": \"+1-541-754-3010\"\n  },\n  \"order\": {\n    \"id\": \"myorderid\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Credit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"token\": \"{{token}}\",\n    \"type\": \"tokenized\",\n    \"credit_card_cvv\": \"123\"\n  },\n  \"reconciliation_id\": \"23434534534\"\n}\n"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/credits",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"credits"
+							]
+						},
+						"description": "Create a new authorization"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Void",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"EUR\",\n  \"billing_address\": {\n    \"phone\": \"+1-541-754-3010\"\n  },\n  \"order\": {\n    \"id\": \"myorderid\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Authorization",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"token\": \"{{token}}\",\n    \"type\": \"tokenized\",\n    \"credit_card_cvv\": \"123\"\n  },\n  \"reconciliation_id\": \"23434534534\"\n}\n"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/authorizations",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"authorizations"
+							]
+						},
+						"description": "Create a new authorization"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Create Void",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/voids",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"voids"
+							]
+						},
+						"description": "Create a void"
+					},
+					"response": []
+				}
+			],
+			"description": "A void request cancels an operation (such as an authorization or capture), before it has been finalized. The most common procedure is to void an authorization.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Refund",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"EUR\",\n  \"billing_address\": {\n    \"phone\": \"+1-541-754-3010\"\n  },\n  \"order\": {\n    \"id\": \"myorderid\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Charge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"// postman.setEnvironmentVariable(\"idempotency_key\", Math.random());"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"type\": \"tokenized\",\n    \"token\": \"{{token}}\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/charges",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"charges"
+							]
+						},
+						"description": "Create a new charge"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Create Refund",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/refunds",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"refunds"
+							]
+						},
+						"description": "Create a refund"
+					},
+					"response": []
+				}
+			],
+			"description": "A refund allows you to cancel or undo a sale and return the charged amount to the customer."
+		},
+		{
+			"name": "Reusing Card Information",
+			"item": [
+				{
+					"name": "1. Create Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "public_key",
+								"value": "{{public_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token_type\": \"credit_card\",\n  \"credit_card_cvv\": \"123\",\n  \"card_number\": \"4111111111111111\",\n  \"expiration_date\": \"10/29\",\n  \"holder_name\": \"John Mark\",\n  \"billing_address\": {\n    \"country\": \"USA\",\n    \"state\": \"NY\",\n    \"city\": \"NYC\",\n    \"line1\": \"fifth avenue 10th\"\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/tokens",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"tokens"
+							]
+						},
+						"description": "Create a new payment token"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"if (jsonData.category != \"api_request_error\") {",
+									"postman.setEnvironmentVariable(\"customerId\", jsonData.id);}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n      \"customer_reference\": \"{{$randomInt}}\",\n      \"email\": \"john@travolta.com\"\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/customers",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"customers"
+							]
+						},
+						"description": "Create a new customer"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Store the Token in the Customer Object",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "test"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/customers/{{customerId}}/payment-methods/{{token}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"customers",
+								"{{customerId}}",
+								"payment-methods",
+								"{{token}}"
+							]
+						},
+						"description": "Associate a token with a customer"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Retrieve Customer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{idempotency_key}}"
+							}
+						],
+						"url": {
+							"raw": "https://api.paymentsos.com/customers/{{customerId}}",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"customers",
+								"{{customerId}}"
+							]
+						},
+						"description": "Gets a customer's data"
+					},
+					"response": []
+				}
+			],
+			"description": "PaymentsOS allows you to save a customer's card information, so that customers do not need to re-enter their payment details each time they want to initiate a transaction on your site."
+		},
+		{
+			"name": "Alternative Payment Methods",
+			"item": [
+				{
+					"name": "2. Create Payment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"paymentid\", jsonData.id);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4097,\n  \"currency\": \"USD\"\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments"
+							]
+						},
+						"description": "Create a new payment"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Create Charge",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "app_id",
+								"value": "{{app_id}}"
+							},
+							{
+								"key": "private_key",
+								"value": "{{private_key}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "api-version",
+								"value": "1.3.0"
+							},
+							{
+								"key": "x-payments-os-env",
+								"value": "{{x-payments-os-env}}"
+							},
+							{
+								"key": "idempotency_key",
+								"value": "{{$randomInt}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"payment_method\": {\n    \"source_type\": \"ewallet\",\n    \"type\": \"untokenized\",\n    \"vendor\": \"applepay\",\n    \"additional_details\": {\n      \"untokenized_result_status\": \"succeed\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "https://api.paymentsos.com/payments/{{paymentid}}/charges",
+							"protocol": "https",
+							"host": [
+								"api",
+								"paymentsos",
+								"com"
+							],
+							"path": [
+								"payments",
+								"{{paymentid}}",
+								"charges"
+							]
+						},
+						"description": "Create a new charge"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

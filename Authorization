@@ -2,9 +2,30 @@ Request:
 
 {
   "payment_method": {
-    "token": "{{token}}",
-    "type": "tokenized",
-    "credit_card_cvv": "123"
+    "credit_card_cvv": "123",
+    "token": "aec0faea-703f-46b2-b36e-2aa3d16dada6",
+    "type": "tokenized"
   },
-  "reconciliation_id": "23434534534"
+  "provider_specific_data": {
+    "payu_latam": {
+      "additional_details": {
+        "cookie": "",
+        "customer_national_identify_number": "123456",
+        "payer_email": "John.Doe@email.com"
+      },
+      "device_fingerprint": {
+        "fingerprint": "35",
+        "provider": "PayULatam"
+      }
+    }
+  },
+  "reconciliation_id": "40762342"
+}
+
+
+Response:
+{
+    "more_info": "operation not supported",
+    "category": "provider_request_error",
+    "description": "The request sent to the provider is invalid."
 }

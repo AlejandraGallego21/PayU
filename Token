@@ -7,7 +7,7 @@ Request:
   "expiration_date": "10/29",
   "holder_name": "John Mark",
   "billing_address": {
-    "country": "USA",
+    "country": "COL",
     "state": "NY",
     "city": "NYC",
     "line1": "fifth avenue 10th"
@@ -17,8 +17,8 @@ Request:
 Response:
 
 {
-    "token": "7b56d311-377f-4882-8964-eead3b80e17d",
-    "created": "1618672090978",
+    "token": "aec0faea-703f-46b2-b36e-2aa3d16dada6",
+    "created": "1618793385371",
     "pass_luhn_validation": true,
     "token_type": "credit_card",
     "type": "tokenized",
@@ -38,5 +38,5 @@ Response:
     "holder_name": "John Mark",
     "expiration_date": "10/2029",
     "last_4_digits": "1111",
-    "encrypted_cvv": "NmRlNGVmZjQtMmY2NS00NDczLTgzMDAtMmViOTIxZGZiOTM4Y3Z2X2RlbGltaXRlcnZhdWx0OnY0OnBBdWRmVkZBQ3BjSCtkQ2tLNDZnaE15bmUyQmgxRG0yZFFlUGlsK1RSVFZENm5QNSs1K0ZzQ1A0ekVWcVU0bURCclpONEhZaFp1VDVSaXBzOU8wa1d0WFQ5aEhrTko0bjJzMHB1ZXU4"
+    "encrypted_cvv": "ODUyOTUxOGMtM2MxMS00NTI5LWI3ZmItNTNhODgzN2I1YjhkY3Z2X2RlbGltaXRlcnZhdWx0OnY0OlNsM2dLUGtyVzQ4OGwrRmZkWVZUeHRET21SV0tWcE52clF4UXNNaGdrSG5GdlM0a21ySzBwOVNXWitkUU9DOTU3U1kxbEFZM1h3bkY3clFOSDdFdzdpSkwyelVGSUhZdXRGQ1dPYm5Q"
 }

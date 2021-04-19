@@ -1,23 +1,23 @@
 Requeste:
 
 {
-  "amount": 4097,
-  "currency": "EUR",
+  "amount": 1000,
+  "currency": "COP",
   "billing_address": {
     "phone": "+1-541-754-3010"
   },
   "order": {
-    "id": "myorderid"
+    "id": "8bb5327d-f9aa-4cd0-b7f2-38ae739ef92a"
   }
 }
 
 Response
 
 {
-    "id": "a561486b-e090-44e7-9a9b-5e6ce742cbce",
-    "currency": "EUR",
-    "created": "1618672288085",
-    "modified": "1618672288085",
+    "id": "8a334617-c038-4b28-b522-a38706a1219f",
+    "currency": "COP",
+    "created": "1618794715373",
+    "modified": "1618794715373",
     "is_disputed": false,
     "status": "Initialized",
     "billing_address": {
@@ -26,31 +26,31 @@ Response
     "possible_next_actions": [
         {
             "action": "Credit",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce/credits"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f/credits"
         },
         {
             "action": "Charge",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce/charges"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f/charges"
         },
         {
             "action": "Authorization",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce/authorizations"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f/authorizations"
         },
         {
             "action": "Update Payment",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f"
         },
         {
             "action": "Authentication",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce/authentications"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f/authentications"
         },
         {
             "action": "Risk analysis",
-            "href": "https://api.paymentsos.com/payments/a561486b-e090-44e7-9a9b-5e6ce742cbce/risk-analyses"
+            "href": "https://api.paymentsos.com/payments/8a334617-c038-4b28-b522-a38706a1219f/risk-analyses"
         }
     ],
     "order": {
-        "id": "myorderid"
+        "id": "8bb5327d-f9aa-4cd0-b7f2-38ae739ef92a"
     },
-    "amount": 4097
+    "amount": 1000
 }
